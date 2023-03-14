@@ -5,8 +5,9 @@ import type { PublicClient } from "viem";
 import {
   createPublicClient,
   createWalletClient,
-  encodePacked,
+  encodeAbiParameters,
   http,
+  parseAbiParameters,
 } from "viem";
 import { arbitrum, celo } from "viem/chains";
 import { getAccount } from "viem/ethers";
@@ -112,7 +113,9 @@ const arbitrage = async (chain: keyof typeof supportedNetworks) => {
               upperBound: l.upperBound,
               amount: uniV2Arb.amount,
               swapType: 0,
-              swapExtraData: encodePacked(["uint24"], [3000]),
+              swapExtraData: encodeAbiParameters(parseAbiParameters("uint24"), [
+                3000,
+              ]),
               recipient: account.address,
             },
           ],
@@ -144,7 +147,9 @@ const arbitrage = async (chain: keyof typeof supportedNetworks) => {
               upperBound: l.upperBound,
               amount: uniV3Arb.amount,
               swapType: 1,
-              swapExtraData: encodePacked(["uint24"], [3000]),
+              swapExtraData: encodeAbiParameters(parseAbiParameters("uint24"), [
+                3000,
+              ]),
               recipient: account.address,
             },
           ],

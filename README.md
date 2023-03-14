@@ -63,4 +63,5 @@ pnpm typecheck
 - [ ] Don't query the subgraph every time because updates are infrequent and this is slow
 - [ ] Websockets is much faster for data querying
 - [ ] Determine whether trading on V2 or V3 is more profitable rather than just trading on V3 if V2 doesn't succeed
+- [ ] Look at different fee tiers for Uniswap V3 rather than just 0.3%
 - [ ] Account for gas when deciding whether to arb or not

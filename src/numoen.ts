@@ -66,25 +66,23 @@ export const calcArbAmount = (
   lendgineInfo: Awaited<ReturnType<typeof getLendgineInfo>>,
   targetPrice: bigint
 ) => {
-  const reserve1 =
-    ((targetPrice > lendgine.upperBound
+  const a =
+    targetPrice > lendgine.upperBound
       ? BigInt(0)
-      : lendgine.upperBound - targetPrice) *
-      BigInt(2) *
-      lendgineInfo.liquidity) /
-    ether;
+      : lendgine.upperBound - targetPrice;
+  const reserve1 = (a * BigInt(2) * lendgineInfo.liquidity) / ether;
 
-  const arb0 = reserve1 > lendgineInfo.reserve1;
+  const adjustedReserve1 = lendgineInfo.reserve1 * tokenExp(lendgine.token1Exp);
+
+  const arb0 = reserve1 > adjustedReserve1;
 
   return arb0
     ? {
         arb: 0,
-        amount:
-          (reserve1 - lendgineInfo.reserve1) / tokenExp(lendgine.token1Exp),
+        amount: (reserve1 - adjustedReserve1) / tokenExp(lendgine.token1Exp),
       }
     : {
         arb: 1,
-        amount:
-          (lendgineInfo.reserve1 - reserve1) / tokenExp(lendgine.token1Exp),
+        amount: (adjustedReserve1 - reserve1) / tokenExp(lendgine.token1Exp),
       };
 };

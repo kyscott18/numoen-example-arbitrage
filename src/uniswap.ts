@@ -120,7 +120,7 @@ export const getUniswapV3Price = async (
       address: poolAddress as Address,
       functionName: "slot0",
     });
-    const price = result[0] ** BigInt(2) / BigInt(2) ** BigInt(192);
+    const price = (ether * result[0] * result[0]) / BigInt(2) ** BigInt(192);
 
     return flipped
       ? (price * tokenExp(sortedTokens[1].decimals)) /
