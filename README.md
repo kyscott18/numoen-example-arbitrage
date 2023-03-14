@@ -1,4 +1,4 @@
-# Example Arbitrage [![Github Actions][gha-badge]][gha]  [![License: MIT][license-badge]][license]
+# Example Arbitrage [![Github Actions][gha-badge]][gha] [![License: MIT][license-badge]][license]
 
 [gha]: https://github.com/numoen/swap-library/actions
 [gha-badge]: https://github.com/Numoen/swap-library/actions/workflows/ci.yml/badge.svg
@@ -59,7 +59,8 @@ pnpm typecheck
 
 ### Improvements
 
-- [ ] Calculate the slippage that will occur on the external market
-- [ ] Don't query the subgraph every time
-- [ ] Determine whether trading on V2 or V3 is more profitable
+- [ ] Calculate the price impact that will occur on the exchange we are arbing with instead of assuming a fixed amount
+- [ ] Don't query the subgraph every time because updates are infrequent and this is slow
+- [ ] Websockets is much faster for data querying
+- [ ] Determine whether trading on V2 or V3 is more profitable rather than just trading on V3 if V2 doesn't succeed
 - [ ] Account for gas when deciding whether to arb or not

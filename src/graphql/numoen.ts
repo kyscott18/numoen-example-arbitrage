@@ -3,6 +3,7 @@ import { getAddress } from "viem/utils";
 
 import type { LendginesQuery } from "../gql/numoen/graphql";
 
+/** Takes the result of a graphql query and formats it. */
 export const parseLendgines = (
   lendginesQuery: LendginesQuery
 ): {

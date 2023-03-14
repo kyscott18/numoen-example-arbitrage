@@ -113,7 +113,6 @@ export const getUniswapV3Price = async (
     univ3[chain].pairInitCodeHash
   );
 
-  console.log(poolAddress);
   // pair might not exist, so we should return undefined if it fails
   try {
     const result = await client.readContract({

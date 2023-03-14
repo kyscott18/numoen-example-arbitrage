@@ -30,9 +30,11 @@ const arbitrageAddress = {
 } as const;
 
 const arbitrage = async (chain: keyof typeof supportedNetworks) => {
+  // load the environment variables
   dotenv.config();
   const graphqlClient = new GraphQLClient(subgraphEndpoints[chain]);
 
+  // setup a viem client for reading public data and signing with a wallet
   const walletClient = createWalletClient({
     chain: supportedNetworks[chain],
     transport: http(supportedNetworks[chain].rpcUrls.default.http[0]),
@@ -46,6 +48,7 @@ const arbitrage = async (chain: keyof typeof supportedNetworks) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const account = getAccount(new Wallet(process.env.PRIVATE_KEY!));
 
+  // Query all existing Lendgines (Lendgine engines) using the Numoen subgraph with a auto-generate query
   const lendgines = parseLendgines(
     await graphqlClient.request(LendginesDocument)
   );
@@ -71,21 +74,29 @@ const arbitrage = async (chain: keyof typeof supportedNetworks) => {
       chain
     );
 
+    // Determing the amount is an approximation. We aren't factoring in price impact that trading
+    // on Uniswap could have. Instead, we just set a max price impact that estimate.
+    // If the real price impact is greater than this, we start to over arb which could cause
+    // the trade to not be profitable. If the real price impact is less the estimate, we under arb
+    // which leaves some profit on the table
     const expectedPriceImpact = 1000;
 
-    const uniV2Arb =
-      uniV2Price &&
-      calcArbAmount(
-        l,
-        lendgineInfo,
-        numoenPrice > uniV2Price
-          ? (uniV2Price * BigInt(expectedPriceImpact + 3000)) /
-              BigInt(1_000_000)
-          : (uniV2Price * BigInt(1_000_000 - (expectedPriceImpact + 3000))) /
-              BigInt(1_000_000)
-      );
-    const uniV3Arb = uniV3Price && calcArbAmount(l, lendgineInfo, uniV3Price);
+    // Account for slippage and fees in the Uniswap price
+    const adjustPrice = (uniswapPrice: bigint) =>
+      numoenPrice > uniswapPrice
+        ? (uniswapPrice * BigInt(expectedPriceImpact + 3000)) /
+          BigInt(1_000_000)
+        : (uniswapPrice * BigInt(1_000_000 - (expectedPriceImpact + 3000))) /
+          BigInt(1_000_000);
 
+    // calculate the optimal arbitrage amount
+    const uniV2Arb =
+      uniV2Price && calcArbAmount(l, lendgineInfo, adjustPrice(uniV2Price));
+    const uniV3Arb =
+      uniV3Price && calcArbAmount(l, lendgineInfo, adjustPrice(uniV3Price));
+
+    // only trade on v3 if v2 doesn't work
+    let v2Success = false;
     if (uniV2Arb) {
       try {
         const { request } = await publicClient.simulateContract({
@@ -112,12 +123,13 @@ const arbitrage = async (chain: keyof typeof supportedNetworks) => {
         // @ts-ignore
         await walletClient.writeContract(request);
         console.log("swap on Uniswap V2 passed");
+        v2Success = true;
       } catch (err) {
         console.log("swap on Uniswap V2 failed", err);
       }
     }
 
-    if (uniV3Arb) {
+    if (!v2Success && uniV3Arb) {
       try {
         const { request } = await publicClient.simulateContract({
           address: arbitrageAddress[chain],
@@ -139,7 +151,6 @@ const arbitrage = async (chain: keyof typeof supportedNetworks) => {
           chain: supportedNetworks[chain],
           account,
         });
-        console.log(request);
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         await walletClient.writeContract(request);
@@ -154,4 +165,5 @@ const arbitrage = async (chain: keyof typeof supportedNetworks) => {
 // attempt the arb
 Promise.all([arbitrage("arbitrum")]).catch((err) => {
   console.error(err);
+  process.exit(1);
 });

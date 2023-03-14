@@ -3,10 +3,14 @@ import type { PublicClient } from "viem";
 import { lendgineAbi } from "./abis/lendgine";
 import type { parseLendgines } from "./graphql/numoen";
 
+/** Computes a scale to multiply a token by to make it 18 decimals. */
 export const tokenExp = (decimals: number) =>
   BigInt(10) ** BigInt(18 - decimals);
+
+/** Ether, the unit. */
 export const ether = tokenExp(0);
 
+/** Fetches information about the state of a Lendgine Contract. */
 export const getLendgineInfo = async (
   lendgine: ReturnType<typeof parseLendgines>[number],
   client: PublicClient
@@ -39,6 +43,7 @@ export const getLendgineInfo = async (
   } as const;
 };
 
+/** Takes some contract state and returns the price exposed by the PMMP exchange. */
 export const calcNumoenPrice = (
   lendgine: ReturnType<typeof parseLendgines>[number],
   lendgineInfo: Awaited<ReturnType<typeof getLendgineInfo>>
@@ -53,6 +58,9 @@ export const calcNumoenPrice = (
   return lendgine.upperBound - scale / BigInt(2);
 };
 
+/** Determines the amount of token1 to arbitrage with by finding out
+ * how much should be bought or sold to reach the target price.
+ */
 export const calcArbAmount = (
   lendgine: ReturnType<typeof parseLendgines>[number],
   lendgineInfo: Awaited<ReturnType<typeof getLendgineInfo>>,
