@@ -60,3 +60,8 @@ pnpm lint
 ### Assumptions
 
 ### Improvements
+
+- [ ] Calculate the slippage that will occur on the external market
+- [ ] Don't query the subgraph every time
+- [ ] Determine whether trading on V2 or V3 is more profitable
+- [ ] Account for gas when deciding whether to arb or not
