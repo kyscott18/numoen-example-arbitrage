@@ -48,7 +48,7 @@ pnpm lint
 Use the Typescript typechecker:
 
 ```sh
-pnpm lint
+pnpm typecheck
 ```
 
 ## Automation
