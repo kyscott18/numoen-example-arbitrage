@@ -1,0 +1,36 @@
+{
+  "name": "numoen-example-arbitrage",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "arb": "ts-node src/arbitrage.ts",
+    "typecheck": "tsc",
+    "lint": "eslint src/ --cache",
+    "lint:fix": "eslint --fix --cache src/",
+    "lint:ci": "eslint src/ --max-warnings=0",
+    "prepare": "husky install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "ethers": "^6.1.0",
+    "graphql-request": "^5.2.0",
+    "viem": "^0.1.15"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.0",
+    "@graphql-codegen/cli": "^3.2.2",
+    "@graphql-codegen/client-preset": "^2.1.1",
+    "@graphql-typed-document-node/core": "^3.1.2",
+    "@saberhq/eslint-config": "^2.1.0",
+    "@types/node": "^18.15.2",
+    "eslint": "^8.36.0",
+    "graphql": "^16.6.0",
+    "husky": "^8.0.3",
+    "prettier": "^2.8.4",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
+  }
+}
