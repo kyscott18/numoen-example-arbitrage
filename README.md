@@ -55,7 +55,13 @@ pnpm typecheck
 
 ## Methodology
 
-### Assumptions
+Each instance of Numoen's PMMP is an automated market makers like Uniswap. Differently from Uniswap, there are multiply PMMPs per token pair depending on which token is being longed or shorted. It is important that the price exposed by each PMMP matches the external market price because this ensures that the derivatives are priced correctly. Failing to arbitrage will not be a critical error but will result in the cost of a PMMP Power Token to not be what traders expect.
+
+Arbitraguers can profit based on the discrepancy in prices between each PMMP and UniswapV2Pair or UniswapV3Pool. This works by buying on one exchange and selling on the other or vice-versa. When prices on a PMMP are higher, it is profitable to sell on a PMMP and buy on an external exchange like UniswapV3Pool.
+
+The smart contract logic of this trade is implemented in [Arbitrage.sol](https://github.com/Numoen/swap-library/blob/master/src/examples/Arbitrage.sol). `arbitrage0` buys on a PMMP and sells on an external exchange while `arbitrage1` sells on a PMMP and buys on an external exchange. This contract takes advantage of flash swaps, where the output of a trade is given to the trader, then allows them to run arbitrage logic, then checks if the proper input was supplied. `Arbitrage.sol` therefore doesn't require the arbitraguer to use any of their own capital to arbitrage, and will revert in the case of an unprofitable trade. `arbitrage0` and `arbitrage1` both take the same paramters. They include parameters for determining which PMMP instance to trade with, which external exchange to trade with, who to send the reward to, and most importantly the amount to arbitrage with. The amount to arbitrage with is the amount of `token1` in the PMMP that is sold on one exchange and bought on the other or vice-versa.
+
+When exchanges are perfectly at balance, the quote price or price exposed by the exchange for an infinitemsaly small trade, are exactly equal. Quote prices in automated market makers depend on the amount of reserves and the trading invariant. Therefore, calculating the optimal amount to pass as `amount` in `Arbitrage.sol` is the amount that causes the quote prices to be exactly equal.
 
 ### Improvements
 
@@ -65,3 +71,4 @@ pnpm typecheck
 - [ ] Determine whether trading on V2 or V3 is more profitable rather than just trading on V3 if V2 doesn't succeed
 - [ ] Look at different fee tiers for Uniswap V3 rather than just 0.3%
 - [ ] Account for gas when deciding whether to arb or not
+- [ ] Trades on the Celo network are reverting, I think this could have something to do with the cGLD precompile not being handled in viem correctly, leading to errors when simulating contract calls
