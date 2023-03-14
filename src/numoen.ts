@@ -50,6 +50,8 @@ export const calcNumoenPrice = (
 ) => {
   if (lendgineInfo.liquidity === BigInt(0)) return BigInt(0);
 
+  // From the invariant in the Numoen PMMP R1/L = 2 * (UpperBound - Price)
+  // or Price = UpperBound - R1/2L
   const scaleFactor = tokenExp(lendgine.token1Exp);
 
   const scale =
@@ -66,23 +68,30 @@ export const calcArbAmount = (
   lendgineInfo: Awaited<ReturnType<typeof getLendgineInfo>>,
   targetPrice: bigint
 ) => {
+  // We want the price on Numoen to match the targetPrice
+  // From the Numoen PMMP invariant, it can be derived that R1/L = 2 * (UpperBound - Price)
+  // We use this with Price = targetPrice to determine the target amuont of R1
   const a =
     targetPrice > lendgine.upperBound
       ? BigInt(0)
       : lendgine.upperBound - targetPrice;
-  const reserve1 = (a * BigInt(2) * lendgineInfo.liquidity) / ether;
 
+  const targetR1 = (a * BigInt(2) * lendgineInfo.liquidity) / ether;
+
+  // Adjust r1 for decimals
   const adjustedReserve1 = lendgineInfo.reserve1 * tokenExp(lendgine.token1Exp);
 
-  const arb0 = reserve1 > adjustedReserve1;
+  // If we need to add token1 to reach the target, this means we sell R1 on a Numoen PMMP and buy it on an external market
+  const arb0 = targetR1 > adjustedReserve1;
 
+  // Amount is the amount that we must move in or out of the PMMP instance to reach the target
   return arb0
     ? {
         arb: 0,
-        amount: (reserve1 - adjustedReserve1) / tokenExp(lendgine.token1Exp),
+        amount: (targetR1 - adjustedReserve1) / tokenExp(lendgine.token1Exp),
       }
     : {
         arb: 1,
-        amount: (adjustedReserve1 - reserve1) / tokenExp(lendgine.token1Exp),
+        amount: (adjustedReserve1 - targetR1) / tokenExp(lendgine.token1Exp),
       };
 };

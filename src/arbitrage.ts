@@ -90,11 +90,20 @@ const arbitrage = async (chain: keyof typeof supportedNetworks) => {
         : (uniswapPrice * BigInt(1_000_000 - (expectedPriceImpact + 3000))) /
           BigInt(1_000_000);
 
+    const arbExists = (uniswapPrice: bigint) =>
+      numoenPrice > uniswapPrice
+        ? numoenPrice > adjustPrice(uniswapPrice)
+        : numoenPrice < adjustPrice(uniswapPrice);
+
     // calculate the optimal arbitrage amount
     const uniV2Arb =
-      uniV2Price && calcArbAmount(l, lendgineInfo, adjustPrice(uniV2Price));
+      !!uniV2Price && arbExists(uniV2Price)
+        ? calcArbAmount(l, lendgineInfo, adjustPrice(uniV2Price))
+        : undefined;
     const uniV3Arb =
-      uniV3Price && calcArbAmount(l, lendgineInfo, adjustPrice(uniV3Price));
+      !!uniV3Price && arbExists(uniV3Price)
+        ? calcArbAmount(l, lendgineInfo, adjustPrice(uniV3Price))
+        : undefined;
 
     // only trade on v3 if v2 doesn't work
     let v2Success = false;
