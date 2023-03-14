@@ -12,7 +12,7 @@ env:
   PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
 
 jobs:
-  typecheck:
+  arbitrage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
