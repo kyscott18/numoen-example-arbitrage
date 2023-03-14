@@ -23,6 +23,7 @@ jobs:
           node-version: 18.x
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
+      - run: pnpm graphql-codegen
       - run: pnpm typecheck
 
   lint:
@@ -39,4 +40,5 @@ jobs:
           node-version: 18.x
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
+      - run: pnpm graphql-codegen
       - run: pnpm lint:ci
