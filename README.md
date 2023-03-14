@@ -53,7 +53,7 @@ pnpm typecheck
 
 ## Automation
 
-**.github.workflows.arbitrage.yml** Is a github action for attempting an arbitrage every 15 minutes. In order for this to work, you must add your private key as a github action secret in a forked github repo and label it `PRIVATE_KEY`.
+**.github/workflows/arbitrage.yml** Is a github action for attempting an arbitrage every 15 minutes. In order for this to work, you must add your private key as a github action secret in a forked github repo and label it `PRIVATE_KEY`.
 
 ## Methodology
 
