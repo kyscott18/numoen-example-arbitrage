@@ -1,9 +1,7 @@
-# Example Arbitrage [![Github Actions][gha-badge]][gha] [![Foundry][foundry-badge]][foundry] [![License: MIT][license-badge]][license]
+# Example Arbitrage [![Github Actions][gha-badge]][gha]  [![License: MIT][license-badge]][license]
 
 [gha]: https://github.com/numoen/swap-library/actions
 [gha-badge]: https://github.com/Numoen/swap-library/actions/workflows/ci.yml/badge.svg
-[foundry]: https://getfoundry.sh/
-[foundry-badge]: https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg
 [license]: https://opensource.org/licenses/MIT
 [license-badge]: https://img.shields.io/badge/License-MIT-blue.svg
 
@@ -48,12 +46,12 @@ pnpm lint
 Use the Typescript typechecker:
 
 ```sh
-pnpm lint
+pnpm typecheck
 ```
 
 ## Automation
 
-**.github.workflows.arbitrage.ymp** Is a github action for attempting an arbitrage every 15 minutes. In order for this to work, you must add your private key as a github action secret in a forked github repo and label it `PRIVATE_KEY`.
+**.github/workflows/arbitrage.yml** Is a github action for attempting an arbitrage every 15 minutes. In order for this to work, you must add your private key as a github action secret in a forked github repo and label it `PRIVATE_KEY`.
 
 ## Methodology
 
