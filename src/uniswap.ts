@@ -1,6 +1,11 @@
 import { getCreate2Address } from "ethers";
 import type { Address, PublicClient } from "viem";
-import { encodePacked, keccak256 } from "viem";
+import {
+  encodeAbiParameters,
+  encodePacked,
+  keccak256,
+  parseAbiParameters,
+} from "viem";
 
 import { uniswapV2PairAbi } from "./abis/uniswapV2Pair";
 import { uniswapV3Pool } from "./abis/uniswapV3Pool";
@@ -29,6 +34,7 @@ const sortTokens = (
     ? tokens
     : ([tokens[1], tokens[0]] as const);
 
+/** Fetches the current quote price on Uniswap V2. */
 export const getUniswapV2Price = async (
   tokens: readonly [
     { address: Address; decimals: number },
@@ -82,6 +88,7 @@ const univ3 = {
   },
 } as const;
 
+/** Fetches the current quote price on Uniswap V3. */
 export const getUniswapV3Price = async (
   tokens: readonly [
     { address: Address; decimals: number },
@@ -97,14 +104,16 @@ export const getUniswapV3Price = async (
   const poolAddress = getCreate2Address(
     univ3[chain].factoryAddress,
     keccak256(
-      encodePacked(
-        ["address", "address", "uint24"],
-        [sortedTokens[0].address, sortedTokens[1].address, 3000]
-      )
+      encodeAbiParameters(parseAbiParameters("address, address, uint24"), [
+        sortedTokens[0].address,
+        sortedTokens[1].address,
+        3000,
+      ])
     ),
     univ3[chain].pairInitCodeHash
   );
 
+  console.log(poolAddress);
   // pair might not exist, so we should return undefined if it fails
   try {
     const result = await client.readContract({
