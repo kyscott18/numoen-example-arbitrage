@@ -80,15 +80,15 @@ const arbitrage = async (chain: keyof typeof supportedNetworks) => {
     // If the real price impact is greater than this, we start to over arb which could cause
     // the trade to not be profitable. If the real price impact is less the estimate, we under arb
     // which leaves some profit on the table
-    const expectedPriceImpact = 1000;
+    const expectedPriceImpact = 1000n;
 
     // Account for slippage and fees in the Uniswap price
     const adjustPrice = (uniswapPrice: bigint) =>
       numoenPrice > uniswapPrice
-        ? (uniswapPrice * BigInt(expectedPriceImpact + 3000)) /
-          BigInt(1_000_000)
-        : (uniswapPrice * BigInt(1_000_000 - (expectedPriceImpact + 3000))) /
-          BigInt(1_000_000);
+        ? (uniswapPrice * (1_000_000n + expectedPriceImpact + 3000n)) /
+          1_000_000n
+        : (uniswapPrice * (1_000_000n - (3000n + expectedPriceImpact))) /
+          1_000_000n;
 
     const arbExists = (uniswapPrice: bigint) =>
       numoenPrice > uniswapPrice
