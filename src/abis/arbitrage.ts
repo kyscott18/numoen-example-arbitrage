@@ -31,6 +31,11 @@ export const arbitrageAbi = [
     type: "error",
   },
   {
+    inputs: [],
+    name: "NotProfitable",
+    type: "error",
+  },
+  {
     inputs: [
       {
         components: [

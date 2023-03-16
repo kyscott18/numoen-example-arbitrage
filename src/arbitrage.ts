@@ -26,8 +26,8 @@ const subgraphEndpoints = {
 };
 
 const arbitrageAddress = {
-  arbitrum: "0xD5A55e55b891848c0795fc7EbD381C0e119e01eB",
-  celo: "0xD5A55e55b891848c0795fc7EbD381C0e119e01eB",
+  arbitrum: "0x6773CcD8AEB3c172878F6D44Accd53a2d9401712",
+  celo: "0x6773CcD8AEB3c172878F6D44Accd53a2d9401712",
 } as const;
 
 const arbitrage = async (chain: keyof typeof supportedNetworks) => {
@@ -107,7 +107,7 @@ const arbitrage = async (chain: keyof typeof supportedNetworks) => {
 
     // only trade on v3 if v2 doesn't work
     let v2Success = false;
-    if (uniV2Arb) {
+    if (uniV2Arb && uniV2Arb.amount > 0n) {
       try {
         const { request } = await publicClient.simulateContract({
           address: arbitrageAddress[chain],
@@ -137,11 +137,11 @@ const arbitrage = async (chain: keyof typeof supportedNetworks) => {
         console.log("swap on Uniswap V2 passed");
         v2Success = true;
       } catch (err) {
-        console.log("swap on Uniswap V2 failed", err);
+        console.log("swap on Uniswap V2 failed");
       }
     }
 
-    if (!v2Success && uniV3Arb) {
+    if (!v2Success && uniV3Arb && uniV3Arb.amount > 0n) {
       try {
         const { request } = await publicClient.simulateContract({
           address: arbitrageAddress[chain],
@@ -170,7 +170,7 @@ const arbitrage = async (chain: keyof typeof supportedNetworks) => {
         await walletClient.writeContract(request);
         console.log("swap on Uniswap V3 passed");
       } catch (err) {
-        console.log("swap on Uniswap V3 failed", err);
+        console.log("swap on Uniswap V3 failed");
       }
     }
   }
