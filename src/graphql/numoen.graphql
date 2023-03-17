@@ -1,8 +1,12 @@
 query Lendgines {
   lendgines(subgraphError: allow) {
     id
-    token0
-    token1
+    token0 {
+      id
+    }
+    token1 {
+      id
+    }
     token0Exp
     token1Exp
     upperBound
