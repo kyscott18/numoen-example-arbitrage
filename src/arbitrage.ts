@@ -27,7 +27,7 @@ const subgraphEndpoints = {
 
 const arbitrageAddress = {
   arbitrum: "0x6773CcD8AEB3c172878F6D44Accd53a2d9401712",
-  celo: "0x6773CcD8AEB3c172878F6D44Accd53a2d9401712",
+  celo: "0x2df49c3Fb173585e69f9D7748A073DcBc56c6Ce0",
 } as const;
 
 const arbitrage = async (chain: keyof typeof supportedNetworks) => {
@@ -177,7 +177,7 @@ const arbitrage = async (chain: keyof typeof supportedNetworks) => {
 };
 
 // attempt the arb
-Promise.all([arbitrage("arbitrum")]).catch((err) => {
+Promise.all([arbitrage("celo"), arbitrage("arbitrum")]).catch((err) => {
   console.error(err);
   process.exit(1);
 });
