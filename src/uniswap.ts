@@ -22,6 +22,11 @@ const univ2 = {
     pairInitCodeHash:
       "0xb3b8ff62960acea3a88039ebcf80699f15786f1b17cebd82802f7375827a339c",
   },
+  polygon: {
+    factoryAddress: "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32",
+    pairInitCodeHash:
+      "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
+  },
 } as const;
 
 const sortTokens = (
@@ -83,6 +88,11 @@ const univ3 = {
   },
   celo: {
     factoryAddress: "0xAfE208a311B21f13EF87E33A90049fC17A7acDEc",
+    pairInitCodeHash:
+      "0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54",
+  },
+  polygon: {
+    factoryAddress: "0x1F98431c8aD98523631AE4a59f267346ea31F984",
     pairInitCodeHash:
       "0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54",
   },
