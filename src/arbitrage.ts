@@ -9,7 +9,7 @@ import {
   http,
   parseAbiParameters,
 } from "viem";
-import { arbitrum, celo } from "viem/chains";
+import { arbitrum, celo, polygon } from "viem/chains";
 import { getAccount } from "viem/ethers";
 
 import { arbitrageAbi } from "./abis/arbitrage";
@@ -18,16 +18,18 @@ import { parseLendgines } from "./graphql/numoen";
 import { calcArbAmount, calcNumoenPrice, getLendgineInfo } from "./numoen";
 import { getUniswapV2Price, getUniswapV3Price } from "./uniswap";
 
-const supportedNetworks = { celo: celo, arbitrum: arbitrum };
+const supportedNetworks = { celo: celo, arbitrum: arbitrum, polygon: polygon };
 
 const subgraphEndpoints = {
   arbitrum: "https://api.thegraph.com/subgraphs/name/kyscott18/numoen-arbitrum",
   celo: "https://api.thegraph.com/subgraphs/name/kyscott18/numoen-celo",
+  polygon: "https://api.thegraph.com/subgraphs/name/kyscott18/numoen-polygon",
 };
 
 const arbitrageAddress = {
   arbitrum: "0x6773CcD8AEB3c172878F6D44Accd53a2d9401712",
   celo: "0x2df49c3Fb173585e69f9D7748A073DcBc56c6Ce0",
+  polygon: "0x2df49c3Fb173585e69f9D7748A073DcBc56c6Ce0",
 } as const;
 
 const arbitrage = async (chain: keyof typeof supportedNetworks) => {
@@ -177,7 +179,11 @@ const arbitrage = async (chain: keyof typeof supportedNetworks) => {
 };
 
 // attempt the arb
-Promise.all([arbitrage("celo"), arbitrage("arbitrum")]).catch((err) => {
+Promise.all([
+  arbitrage("polygon"),
+  arbitrage("celo"),
+  arbitrage("arbitrum"),
+]).catch((err) => {
   console.error(err);
   process.exit(1);
 });
